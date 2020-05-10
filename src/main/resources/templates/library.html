@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Библиотека</title>
+
+</head>
+<body onload="loadPageee()">
+<script>
+    function getXmlHttp() {
+        let xmlhttp;
+        try {
+            xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+        } catch (e) {
+            try {
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch (E) {
+                xmlhttp = false;
+            }
+        }
+        if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+            xmlhttp = new XMLHttpRequest();
+        }
+        return xmlhttp;
+    }
+
+    function loadPageee() {
+        let book = getXmlHttp();
+        book.open("POST", "/listbook", true);
+        book.send("POST", "/listbook");
+        let author = getXmlHttp();
+        author.open("POST", "/listauthor", true);
+        author.send("POST", "/listauthor");
+        book.onreadystatechange = function () {
+            if (book.readyState === 4 && book.status === 200) {
+                let json = book.responseText;
+                let books = JSON.parse(json);
+                let arrayHtml = '';
+                author.onreadystatechange = function () {
+                    if (author.readyState === 4 && author.status === 200) {
+                        let json = author.responseText;
+                        let authors = JSON.parse(json);
+                        let arrayHtml = '';
+                        for (let i = 0; i < books.length; i++) {
+                            arrayHtml += '<div style="float: left; margin: 7px; border: 1px solid black; padding: 3px">' + '<img src="' + books[i].img + '">' + '<div>' + books[i].name + '</div>' + '<div>' + authors[i].name + ' ' + authors[i].lastname + '</div>' + '</div>';
+                            document.getElementById("books").innerHTML = arrayHtml;
+                        }
+                    }
+                };
+            }
+        };
+    }
+
+</script>
+<div style="width: auto;">
+    <span id="books"></span>
+</div>
+</body>
+</html>

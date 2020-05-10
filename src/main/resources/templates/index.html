@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавление</title>
+</head>
+<body onload="loadPage(), loadPagee()">
+<script type="text/javascript">
+    function loadPage() {
+        let xmlhttp = getXmlHttp();
+        xmlhttp.open("POST", "/listbook", true);
+        xmlhttp.send("POST", "/listbook");
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                let json = xmlhttp.responseText;
+                let person = JSON.parse(json);
+                let arrayHtml =
+                    '    <select id="book", name="book">\n' +
+                    '        <option>Выберите книгу</option>\n' +
+                    '        \n';
+                for (let i = 0; i < person.length; i++) {
+                    arrayHtml += '<option value="' + person[i].name + '">' + person[i].name + '</option>';
+                }
+                arrayHtml += '</select>';
+                document.getElementById("books").innerHTML = arrayHtml;
+            }
+        };
+    }
+
+    function loadPagee() {
+        let xmlhttp = getXmlHttp();
+        xmlhttp.open("POST", "/listauthor", true);
+        xmlhttp.send("POST", "/listauthor");
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                let json = xmlhttp.responseText;
+                let person = JSON.parse(json);
+                let arrayHtml =
+                    '    <select id="author", name="author">\n' +
+                    '        <option>Выберите автора</option>\n' +
+                    '        \n';
+                for (let i = 0; i < person.length; i++) {
+                    arrayHtml += '<option value="' + person[i].name + ' ' + person[i].lastname + '">' + person[i].name + ' ' + person[i].lastname + '</option>';
+                }
+                arrayHtml += '</select>';
+                document.getElementById("authors").innerHTML = arrayHtml;
+            }
+        };
+    }
+
+    function getXmlHttp() {
+        let xmlhttp;
+        try {
+            xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+        } catch (e) {
+            try {
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch (E) {
+                xmlhttp = false;
+            }
+        }
+        if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+            xmlhttp = new XMLHttpRequest();
+        }
+        return xmlhttp;
+    }
+
+    function addbook() {
+        let bookname = document.getElementById("bookname").value;
+        let bookimg = document.getElementById("bookimg").value;
+        let xmlhttp = getXmlHttp();
+        xmlhttp.open("POST", "/addbook?name=" + bookname + "&img=" + bookimg, true);
+        xmlhttp.send("POST", "/addbook?name=" + bookname + "&img=" + bookimg);
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                document.getElementById("returnbook").innerHTML = xmlhttp.responseText;
+            }
+        };
+    }
+
+    function addauthor() {
+        let authorname = document.getElementById("authorname").value;
+        let authorlastname = document.getElementById("authorlastname").value;
+        let xmlhttp = getXmlHttp();
+        xmlhttp.open("POST", "/addauthor?name=" + authorname + "&lastname=" + authorlastname, true);
+        xmlhttp.send("POST", "/addauthor?name=" + authorname + "&lastname=" + authorlastname);
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                document.getElementById("returnauthor").innerHTML = xmlhttp.responseText;
+            }
+        };
+    }
+
+    function addba() {
+        let selectb = document.getElementById("book");
+        let valueb = selectb.value;
+        let selecta = document.getElementById("author");
+        let valuea = selecta.value;
+        let xmlhttp = getXmlHttp();
+        xmlhttp.open("POST", "/addba?book=" + valueb + "&author=" + valuea, true);
+        xmlhttp.send("POST", "/addba?book=" + valueb + "&author=" + valuea);
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                document.getElementById("returnba").innerHTML = xmlhttp.responseText;
+            }
+        };
+    }
+</script>
+<div>
+    <span id="books"></span>
+    <br/>
+    <span id="authors"></span>
+    <br/>
+    <input method="post" onclick="addba()" type="button" value="Добавить связь"/>
+    <p>Результат: <span id="returnba"></span></p>
+
+    <br/>
+    <input id="bookname" name="bookname" placeholder="Название" type="text"/>
+    <br/>
+    <input id="bookimg" name="bookimg" placeholder="Ссылка на картинку" type="text"/>
+    <br/>
+    <input method="post" onclick="addbook()" type="button" value="Добавить книгу"/>
+    <p>Результат: <span id="returnbook"></span></p>
+
+    <br/>
+    <input id="authorname" name="authorname" placeholder="Название" type="text"/>
+    <br/>
+    <input id="authorlast" name="authorlast" placeholder="Ссылка на картинку" type="text"/>
+    <br/>
+    <input method="post" onclick="addauthor()" type="button" value="Добавить автора"/>
+    <p>Результат: <span id="returnauthor"></span></p>
+</div>
+</body>
+</html>
